@@ -14,6 +14,7 @@ So basicly it does for now:
 - Serial Communication for controlling. 
 - I2C Communication to make easier to interact with Multiwii Boards with 328p (NOT TESTED)
 
+TODO:
 - Sound Manager for Buzzer. So you can preset a few tone sequences and just enable it from serial
 - Configurable for other multirotors type
 
