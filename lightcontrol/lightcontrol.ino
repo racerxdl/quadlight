@@ -15,11 +15,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <Wire.h>
 #include "config.h"
 
-char leds[4] = {0,0,0,0};
-char buff[6];
-char recv;
+static char leds[4] = {0,0,0,0};
+static char i2cbuff[6];
+static char buff[6];
+static char recv;
 
 void UpdateLeds()  {
   digitalWrite(L1R, leds[0] & (1 << 0));
@@ -37,6 +39,25 @@ void UpdateLeds()  {
   digitalWrite(L4R, leds[3] & (1 << 0));
   digitalWrite(L4B, leds[3] & (1 << 1));
   digitalWrite(L4G, leds[3] & (1 << 2));
+}
+
+void I2C_Receive(int argc) {
+  uint8_t count = 0;
+  for(int i=0;i<6;i++)  i2cbuff[i] = 0;
+  if(argc <= 6)  {
+    while(count < argc)  {
+      i2cbuff[count] = Wire.read();
+      count++;
+    }
+    ProcessAction(i2cbuff, true);
+  }
+}
+void I2C_Request()  {  /*Nothing for now*/ }
+
+inline void StartI2C()  {
+  Wire.onReceive(I2C_Receive);
+  Wire.onRequest(I2C_Request);
+  Wire.begin(I2C_ADDRESS);
 }
 
 inline void UpdateHeadlight(uint8_t value)  {
@@ -143,6 +164,37 @@ void setup() {
     UpdateARMLED(3, 7*(i%2));
     UpdateLeds();
   }
+  StartI2C();
+}
+
+void ProcessAction(char *data, boolean i2c)  {
+    switch(data[0])  {
+       case QLP_INFO:  //  INFO
+         if(!i2c)  {
+           Serial.write(QLP_INFO);
+           Serial.write(QUADLIGHT_VERSION);
+           Serial.write(QUADLIGHT_PROTOCOL);
+           Serial.write("\x00\x00\x00");
+         }else{
+           Wire.write(QLP_INFO);
+           Wire.write(QUADLIGHT_VERSION);
+           Wire.write(QUADLIGHT_PROTOCOL); 
+         }
+         break;
+       case QLP_UPDATEARM:  UpdateARMLED(data[1], data[2]);UpdateLeds();        break;
+       case QLP_UPDATELED:  UpdateLed(data[1], data[2], data[3]);UpdateLeds();  break;
+       case QLP_HEADLIGHT:  UpdateHeadlight(data[1]);                           break;
+       case QLP_LANDING_ON: LandingOn();                                        break;
+       case QLP_LANDING_OFF:LandingOff();                                       break;
+       case QLP_SOUND:      tone(SPEAKER,data[1]+data[2]*0xFF);                 break;
+       case QLP_NOSOUND:    noTone(SPEAKER);                                    break;
+       default:
+         if(!i2c)
+           Serial.write("\xff\x00\x00\x00\x00\x00");
+         else
+           Wire.write("\xFF");
+         break;
+     }  
 }
 
 void loop() {
@@ -151,25 +203,8 @@ void loop() {
     recv++;  
   }  
   if(recv == 6)  {
-    Serial.print(buff);
     recv = 0;
-     switch(buff[0])  {
-       case QLP_INFO:  //  INFO
-         Serial.write(QLP_INFO);
-         Serial.write(QUADLIGHT_VERSION);
-         Serial.write(QUADLIGHT_PROTOCOL);
-         Serial.write("\x00\x00\x00");
-         break;
-       case QLP_UPDATEARM:  UpdateARMLED(buff[1], buff[2]);UpdateLeds();        break;
-       case QLP_UPDATELED:  UpdateLed(buff[1], buff[2], buff[3]);UpdateLeds();  break;
-       case QLP_HEADLIGHT:  UpdateHeadlight(buff[1]);                           break;
-       case QLP_LANDING_ON: LandingOn();                                        break;
-       case QLP_LANDING_OFF:LandingOff();                                       break;
-       case QLP_SOUND:      tone(SPEAKER,buff[1]+buff[2]*0xFF);                 break;
-       case QLP_NOSOUND:    noTone(SPEAKER);                                    break;
-       default:
-         Serial.write("\xff\x00\x00\x00\x00\x00");
-         break;
-     } 
+    ProcessAction(buff, false);
   }
+  delay(100);
 }

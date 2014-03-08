@@ -12,11 +12,9 @@ So basicly it does for now:
 - Intensity controlled Heading Light
 - Frequency Controlled Buzzer Sound
 - Serial Communication for controlling. 
-
-For future, I plan:
+- I2C Communication to make easier to interact with Multiwii Boards with 328p (NOT TESTED)
 
 - Sound Manager for Buzzer. So you can preset a few tone sequences and just enable it from serial
-- I2C Communication to make easier to interact with Multiwii Boards with 328p
 - Configurable for other multirotors type
 
 
