@@ -1,4 +1,5 @@
-
+#ifndef  QUADLIGHT_CONFIG
+#define QUADLIGHT_CONFIG
 // Lights config
 // The arm lights is made to has three colors
 // R for Red
@@ -34,19 +35,19 @@
 #define HEADLIGHT_MID 127 //  Used only if HEADLIGHT_PWM isnt defined.
                           //  This is used on non Headlight PWM mode for setting the mid point.
                           /// Below the midpoint, the light is off, over is on.
-#define I2C_ADDRESS 6
+#define I2C_ADDRESS 0xD8
 
 // Notes for Start Music
-#define NOTE_0  262
-#define NOTE_1 277
-#define NOTE_2  294
-#define NOTE_3 311
-#define NOTE_4  330
-#define NOTE_5  349
-#define NOTE_6 370
-#define NOTE_7  392
-#define NOTE_8 415
-#define NOTE_9  440
+#define NOTE_0  524
+#define NOTE_1 554
+#define NOTE_2  588
+#define NOTE_3 622
+#define NOTE_4  660
+#define NOTE_5  698
+#define NOTE_6 740
+#define NOTE_7  794
+#define NOTE_8 830
+#define NOTE_9  880
 #define TIME_UNIT 200  //  ms
 
 // Version definition
@@ -65,4 +66,7 @@
 #define QLP_LANDING_OFF 5
 #define QLP_SOUND 6
 #define QLP_NOSOUND 7
+#define QLP_PLAYSONG 8
 #define QLP_UNKNOWN 255
+
+#endif

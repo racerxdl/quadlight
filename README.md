@@ -13,11 +13,12 @@ So basicly it does for now:
 - Frequency Controlled Buzzer Sound
 - Serial Communication for controlling. 
 - I2C Communication to make easier to interact with Multiwii Boards with 328p (NOT TESTED)
+- Sound Manager for Buzzer. So you can preset a few tone sequences and just enable it from serial
+- Three songs on song manager: The Start Song, Battery Low, Battery Critical.
 
 TODO:
-- Sound Manager for Buzzer. So you can preset a few tone sequences and just enable it from serial
 - Configurable for other multirotors type
-
+- More songs for SongManager
 
 
 Current Protocol (v1.0):
@@ -64,3 +65,7 @@ Current Protocol (v1.0):
 -	Response: Nothing
 -	Description: Turn off the buzzer
 
+**QLP_PLAYSOUND** *(0x08)*
+-   Data: (SONG_NUMBER,LOOP,0x00,0x00,0x00,0x00)
+-   Response: Nothing
+-   Description: Play the song SONG_NUMBER (in loop if LOOP > 0)
