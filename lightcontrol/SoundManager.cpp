@@ -1,11 +1,13 @@
 #include "SoundManager.h"
 
 void SoundManager::StartSequence(uint8_t sequence, boolean loop)  {
-  count = 0;
-  loopsequence = loop;
-  curr_sequence = sequence;
-  nextupdate = millis();
-  PlayingTone = true;
+  if(curr_sequence != sequence)  {
+    count = 0;
+    loopsequence = loop;
+    curr_sequence = sequence;
+    nextupdate = millis();
+    PlayingTone = true;
+  }
 }
 
 void SoundManager::Update()  {
