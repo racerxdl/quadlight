@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <Wire.h>
+#include "i2cslave.h"
 #include "./config.h"
 #include "SoundManager.h"
 #include "LedManager.h"
@@ -33,7 +33,7 @@ void I2C_Receive(int argc) {
   for(int i=0;i<3;i++)  i2cbuff[i] = 0;
   if(argc <= 3)  {
     while(count < argc)  {
-      i2cbuff[count] = Wire.read();
+      i2cbuff[count] = I2CSlave::Read();
       count++;
     }
     ProcessAction(i2cbuff, true);
@@ -42,9 +42,7 @@ void I2C_Receive(int argc) {
 void I2C_Request()  {  /*Nothing for now*/ }
 
 inline void StartI2C()  {
-  Wire.onReceive(I2C_Receive);
-  Wire.onRequest(I2C_Request);
-  Wire.begin(I2C_ADDRESS);
+  I2CSlave::Start(I2C_ADDRESS);
 }
 
 
@@ -112,10 +110,6 @@ void ProcessAction(char *data, boolean i2c)  {
            Serial.write(QLP_INFO);
            Serial.write(QUADLIGHT_VERSION);
            Serial.write(QUADLIGHT_PROTOCOL);
-         }else{
-           Wire.write(QLP_INFO);
-           Wire.write(QUADLIGHT_VERSION);
-           Wire.write(QUADLIGHT_PROTOCOL); 
          }
          break;
        case QLP_UPDATEARM:  ledman.UpdateARMLED(data[1], data[2]);       ledman.UpdateLeds();  break;
@@ -129,8 +123,6 @@ void ProcessAction(char *data, boolean i2c)  {
        default:
          if(!i2c)
            Serial.write("\xff\x00\x00");
-         else
-           Wire.write("\xFF");
          break;
      }  
 }
@@ -145,5 +137,7 @@ void loop() {
     recv = 0;
     ProcessAction(buff, false);
   }
+  if(I2CSlave::Available() > 0)
+    I2C_Receive(I2CSlave::Available());
   sndman.Update();
 }
