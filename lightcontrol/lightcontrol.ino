@@ -20,8 +20,8 @@
 #include "SoundManager.h"
 #include "LedManager.h"
 
-static char i2cbuff[6];
-static char buff[6];
+static char i2cbuff[3];
+static char buff[3];
 static char recv;
 
 SoundManager sndman(SPEAKER);
@@ -30,8 +30,8 @@ LedManager   ledman;
 
 void I2C_Receive(int argc) {
   uint8_t count = 0;
-  for(int i=0;i<6;i++)  i2cbuff[i] = 0;
-  if(argc <= 6)  {
+  for(int i=0;i<3;i++)  i2cbuff[i] = 0;
+  if(argc <= 3)  {
     while(count < argc)  {
       i2cbuff[count] = Wire.read();
       count++;
@@ -112,7 +112,6 @@ void ProcessAction(char *data, boolean i2c)  {
            Serial.write(QLP_INFO);
            Serial.write(QUADLIGHT_VERSION);
            Serial.write(QUADLIGHT_PROTOCOL);
-           Serial.write("\x00\x00\x00");
          }else{
            Wire.write(QLP_INFO);
            Wire.write(QUADLIGHT_VERSION);
@@ -129,7 +128,7 @@ void ProcessAction(char *data, boolean i2c)  {
        case QLP_PLAYSONG:   sndman.StartSequence(data[1],data[2]>0);                           break;
        default:
          if(!i2c)
-           Serial.write("\xff\x00\x00\x00\x00\x00");
+           Serial.write("\xff\x00\x00");
          else
            Wire.write("\xFF");
          break;
@@ -142,7 +141,7 @@ void loop() {
     buff[recv] = Serial.read();
     recv++;  
   }  
-  if(recv == 6)  {
+  if(recv == 3)  {
     recv = 0;
     ProcessAction(buff, false);
   }

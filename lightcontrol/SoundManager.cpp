@@ -37,9 +37,17 @@ void SoundManager::Update()  {
          switch(count)  {
            case 0:  PlayTone(800,2); count++; break;
            case 1:  ClearTone(); nextupdate = millis()+1*TIME_UNIT; count ++; break;
-           case 2: ClearTone(); ProcessLoop(); count = 0;      break;
+           case 2:  ClearTone(); ProcessLoop(); count = 0;      break;
          }
        break; 
+       case TONE_UNSTABLE:
+         switch(count)  {
+            case 0:  PlayTone(NOTE_4,5); count++; break;
+            case 1:  PlayTone(NOTE_9,5); count++; break;
+            case 2:  PlayTone(NOTE_4,5); count++; break;
+            case 3:  PlayTone(NOTE_9,5); count++; break; 
+            case 4:  ClearTone(); ProcessLoop(); count = 0;      break;
+         }
     }
   }
 }

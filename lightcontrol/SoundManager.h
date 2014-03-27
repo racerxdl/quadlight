@@ -19,6 +19,7 @@
 #define TONE_START      1
 #define TONE_BATT_LOW   2
 #define TONE_BATT_CRIT  3
+#define TONE_UNSTABLE   4
 
 class SoundManager  {
   private:
