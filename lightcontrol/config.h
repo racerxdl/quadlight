@@ -35,7 +35,7 @@
 #define HEADLIGHT_MID 127 //  Used only if HEADLIGHT_PWM isnt defined.
                           //  This is used on non Headlight PWM mode for setting the mid point.
                           /// Below the midpoint, the light is off, over is on.
-#define I2C_ADDRESS 0xD8
+#define I2C_ADDRESS 0x52
 
 // Notes for Start Music
 #define NOTE_0  524

@@ -28,24 +28,20 @@ SoundManager sndman(SPEAKER);
 LedManager   ledman;
 
 
-void I2C_Receive(int argc) {
+void I2C_Receive(uint8_t argc) {
   uint8_t count = 0;
   for(int i=0;i<3;i++)  i2cbuff[i] = 0;
-  if(argc <= 3)  {
     while(count < argc)  {
       i2cbuff[count] = I2CSlave::Read();
       count++;
     }
     ProcessAction(i2cbuff, true);
-  }
 }
-void I2C_Request()  {  /*Nothing for now*/ }
 
 inline void StartI2C()  {
   I2CSlave::Start(I2C_ADDRESS);
+  I2CSlave::onReceive(&I2C_Receive);
 }
-
-
 
 void initResetTimer()  {
    TCCR1B = 0x00;
@@ -103,7 +99,7 @@ void setup() {
   initResetTimer();
 }
 
-void ProcessAction(char *data, boolean i2c)  {
+void ProcessAction(*data, boolean i2c)  {
     switch(data[0])  {
        case QLP_INFO:  //  INFO
          if(!i2c)  {
@@ -137,7 +133,12 @@ void loop() {
     recv = 0;
     ProcessAction(buff, false);
   }
-  if(I2CSlave::Available() > 0)
+  /*
+  Works now from the Interruption Callback
+  if(I2CSlave::Available() > 0) {
+    delay(1);
     I2C_Receive(I2CSlave::Available());
+  }
+  */
   sndman.Update();
 }

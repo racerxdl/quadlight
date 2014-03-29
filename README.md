@@ -12,14 +12,14 @@ So basicly it does for now:
 - Intensity controlled Heading Light
 - Frequency Controlled Buzzer Sound
 - Serial Communication for controlling. 
-- I2C Communication to make easier to interact with Multiwii Boards with 328p (NOT TESTED)
+- I2C Communication to make easier to interact with Multiwii Boards with 328p (Now working with i2c master test and modified multiwii board)
 - Sound Manager for Buzzer. So you can preset a few tone sequences and just enable it from serial
 - Three songs on song manager: The Start Song, Battery Low, Battery Critical.
 
 TODO:
 - Configurable for other multirotors type
 - More songs for SongManager
-
+- Fix SongManager problem that happens with multiwii modified code.
 
 Current Protocol (v1.0):
 - Each message through serial is fixed at 3 bytes. The first byte is CMD, the others are data.

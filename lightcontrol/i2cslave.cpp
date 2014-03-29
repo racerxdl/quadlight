@@ -2,6 +2,11 @@
 
 uint8_t I2CSlave::buffer_adr;
 uint8_t I2CSlave::i2cdata[I2C_BUFF_SIZE];
+void (*I2CSlave::_i2c_cb)(uint8_t) = &I2CSlave::_defaultI2C_CB;
+
+void I2CSlave::_defaultI2C_CB(uint8_t u)  {
+    //  Do Nothing
+}
 
 void I2CSlave::Start(uint8_t addr)    {
     TWAR= addr;
@@ -43,19 +48,10 @@ ISR (TWI_vect)  {
         data=TWDR;
         if(I2CSlave::buffer_adr == 0xFF)
             I2CSlave::buffer_adr = 0x00;
-        /*
-        if (buffer_adr == 0xFF)     {
-            if(data<i2c_buffer_size+1)    
-                buffer_adr= data;
-            else
-                buffer_adr=0;    
-            TWCR_ACK;
-        }else{*/
             if(I2CSlave::buffer_adr<I2C_BUFF_SIZE+1)    
                 I2CSlave::i2cdata[I2CSlave::buffer_adr]=data;    
             I2CSlave::buffer_adr++;
             TWCR_ACK;    
-        //}
         break;
         
     //Slave transmitter
@@ -72,6 +68,7 @@ ISR (TWI_vect)  {
         break;
     case TW_SR_STOP:
         TWCR_ACK;
+        I2CSlave::_i2c_cb(I2CSlave::buffer_adr);
         break;
     case TW_ST_DATA_NACK: 
     case TW_SR_DATA_NACK:
